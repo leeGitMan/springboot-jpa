@@ -28,12 +28,12 @@ public class MemberApiController {
      한 모든 요청 요구사항을 담기는 어렵다.
      * - 엔티티가 변경되면 API 스펙이 변한다.
      * 결론
-     * - API 요청 스펙에 맞추어 별도의 DTO를 파라미터로 받는다. */
+     * - API 요청 스펙에 맞추어 별도의 DTO를 파라미터로 받는다.
+     * */
     @PostMapping("/api/v1/members")
     public CreateMemberResponse saveMemberV1(@RequestBody @Valid Member member) {
         Long id = memberService.join(member);
         return new CreateMemberResponse(id);
-
         // api 통신을 할 떄는 엔티티를 파라미터로 넘겨주지 말자.
     }
 
@@ -63,7 +63,6 @@ public class MemberApiController {
         memberService.update(id, request.getName());
         Member findMember = memberService.findOne(id);
         return new UpdateMemberResponse(findMember.getId(), findMember.getName());
-
     }
 
 
