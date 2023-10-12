@@ -59,8 +59,6 @@ public class OrderSimpleApiController {
     public List<SimpleOrderDto> ordersV3() {
 
         // fetch join으로 Lazy모드 여도 한 번에 쿼리를 보내서 쿼리를 한개로 줄엿다.
-
-
         List<Order> orders = or.findAllWithMemberDelivery();
         List<SimpleOrderDto> result = orders.stream()
                 .map(o -> new SimpleOrderDto(o))

@@ -4,9 +4,11 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
 import jpabook2.jpashop2.domain.Order;
+import jpabook2.jpashop2.repository.order.query.OrderQueryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +17,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OrderRepository {
     private final EntityManager em;
+    private final OrderQueryRepository oqr;
+
 
     public void save(Order order) {
         em.persist(order);
@@ -67,6 +71,8 @@ public class OrderRepository {
     }
 
 
+
+
     public List<OrderSimpleQueryDto> findOrdersDto() {
        return em.createQuery(
                // jpa는 엔티티나 값타입만 반환할 수 있고 DTO는 반환을 못한다
@@ -77,4 +83,33 @@ public class OrderRepository {
                         " join o.delivery d", OrderSimpleQueryDto.class)
                .getResultList();
     }
+
+    public List<Order> findAllWithItem() {
+        return em.createQuery(
+                // 원래 데이터가 중복된 4개가 나와야하는데
+                // 내가 가지고 있는 스프링부트 버전에서는 distinct 옵션을 사용하지 않아도
+                // 중복된 row수를 줄여줬다.
+                // 근데 db에서는 distinct를 넣어도 완전 중복 데이터가 아니기에
+                // 중복의 수를 줄여주지 않는다.
+                // jpa에서는 distinct가 db에 select distinct로 쿼리를 날려주기는 하지만
+                // Order에 중복된 id값이 있을 떄는 그 중복을 줄여서 데이터를 반환해준다.
+
+                "select o from Order o" +
+                        " join fetch o.member m" +
+                        " join fetch o.delivery d" +
+                        " join fetch o.orderItems oi" +
+                        " join fetch oi.item i", Order.class)
+                .getResultList();
+    }
+
+    public List<Order> findAllWithMemberDelivery(int offset, int limit) {
+        return em.createQuery(
+                        "select o from Order o" +
+                                " join fetch o.member m" +
+                                " join fetch o.delivery d", Order.class
+                ).setFirstResult(offset)
+                .setMaxResults(limit)
+                .getResultList();
+    }
+
 }
