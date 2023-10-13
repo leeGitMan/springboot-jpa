@@ -112,4 +112,11 @@ public class OrderRepository {
                 .getResultList();
     }
 
+
+    /*
+     * 쿼리 dsl
+     * */
+//    public List<Order> findAll(OrderSearch orderSearch) {
+//
+//    }
 }

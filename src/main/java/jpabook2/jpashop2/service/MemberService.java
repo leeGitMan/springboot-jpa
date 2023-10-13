@@ -38,13 +38,13 @@ public class MemberService {
 
     @Transactional(readOnly = true)
     public Member findOne(Long memberId) {
-        return mr.findOne(memberId);
+        return mr.findById(memberId).get();
     }
 
 
 
     public void update(Long id, String name) {
-        Member member = mr.findOne(id);
+        Member member = mr.findById(id).get();
         member.setName(name);
     }
 }
